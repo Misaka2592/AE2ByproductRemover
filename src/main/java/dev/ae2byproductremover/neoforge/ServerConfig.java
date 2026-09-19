@@ -18,8 +18,8 @@ final class ServerConfig {
         USE_BYPRODUCTS = builder.comment(
                 "Allow other predicted processing outputs to satisfy ingredients in new crafting plans.",
                 "False uses independent outputs (Lite); true reuses predicted outputs (V2).",
-                "Reload the world or restart the server to apply. Existing plans keep their behavior.")
-                .worldRestart().define("useByproducts", false);
+                "Saving this file applies to new calculations. Existing previews and jobs keep their plans.")
+                .define("useByproducts", false);
         SPEC = builder.build();
     }
 
@@ -27,6 +27,14 @@ final class ServerConfig {
     }
 
     static void onLoad(ModConfigEvent.Loading event) {
+        apply(event);
+    }
+
+    static void onReload(ModConfigEvent.Reloading event) {
+        apply(event);
+    }
+
+    private static void apply(ModConfigEvent event) {
         if (event.getConfig().getType() == ModConfig.Type.SERVER && event.getConfig().getSpec() == SPEC) {
             PlanningMode.loadWorld(USE_BYPRODUCTS.get());
         }

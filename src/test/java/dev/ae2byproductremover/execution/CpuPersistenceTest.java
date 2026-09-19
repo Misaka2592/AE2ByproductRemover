@@ -60,6 +60,7 @@ import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.MachineSource;
 import appeng.me.service.CraftingService;
 
+import dev.ae2byproductremover.PlanningMode;
 import dev.ae2byproductremover.mixin.execution.ExecutingCraftingJobAccessor;
 import dev.ae2byproductremover.mixin.execution.TaskProgressAccessor;
 import dev.ae2byproductremover.pattern.OutputPattern;
@@ -195,6 +196,34 @@ class CpuPersistenceTest {
     }
 
     @Test
+    void submittingAnExistingPreviewAfterModeChangesPreservesItsPlanAndSavedJob() throws Exception {
+        var gold = AEItemKey.of(Items.GOLD_INGOT);
+        var copper = AEItemKey.of(Items.COPPER_INGOT);
+        try {
+            for (boolean reuse : new boolean[] { false, true }) {
+                PlanningMode.loadWorld(reuse);
+                var view = OutputPattern.forTarget(pattern(), gold, reuse);
+                var preview = new CraftingPlan(new GenericStack(gold, 1), 1,
+                        false, false, new KeyCounter(), new KeyCounter(), new KeyCounter(), Map.of(view, 4L));
+
+                PlanningMode.loadWorld(!reuse);
+                var cpu = cpuWith(preview);
+                assertEquals(preview.patternTimes(), pendingCrafts(cpu));
+                assertEquals(reuse ? 12 : 0, cpu.getPendingOutputs(copper));
+
+                PlanningMode.loadWorld(reuse);
+                var saved = save(cpu);
+                PlanningMode.loadWorld(!reuse);
+                var restored = restore(saved);
+                assertEquals(preview.patternTimes(), pendingCrafts(restored));
+                assertEquals(reuse ? 12 : 0, restored.getPendingOutputs(copper));
+            }
+        } finally {
+            PlanningMode.loadWorld(false);
+        }
+    }
+
+    @Test
     void earlyRequestedOutputDoesNotDiscardPlannedCraftsAndUnusedReturnsDoNotBlockCompletion() throws Exception {
         var view = OutputPattern.indexed(pattern(), AEItemKey.of(Items.GOLD_INGOT));
         var cpu = cpuWith(Map.of(view, 2L));
@@ -273,9 +302,13 @@ class CpuPersistenceTest {
     }
 
     private static CraftingCpuLogic cpuWith(Map<IPatternDetails, Long> crafts) throws Exception {
-        var cpu = emptyCpu();
         var plan = new CraftingPlan(new GenericStack(AEItemKey.of(Items.GOLD_INGOT), 1), 1,
                 false, false, new KeyCounter(), new KeyCounter(), new KeyCounter(), crafts);
+        return cpuWith(plan);
+    }
+
+    private static CraftingCpuLogic cpuWith(ICraftingPlan plan) throws Exception {
+        var cpu = emptyCpu();
         var listenerType = Class.forName("appeng.crafting.execution.ExecutingCraftingJob$CraftingDifferenceListener");
         var listener = Proxy.newProxyInstance(listenerType.getClassLoader(), new Class<?>[] { listenerType },
                 (proxy, method, args) -> null);

@@ -16,5 +16,6 @@ public final class AE2ByproductRemover {
     public AE2ByproductRemover(IEventBus modBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
         modBus.addListener(ServerConfig::onLoad);
+        modBus.addListener(ServerConfig::onReload);
     }
 }

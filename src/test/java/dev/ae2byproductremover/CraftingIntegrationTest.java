@@ -137,12 +137,14 @@ class CraftingIntegrationTest {
     @Test
     void calculationCapturesModeBeforeConfigurationChanges() throws Exception {
         var fixture = twoOutputChain(Map.of(A, 10L));
-        PlanningMode.loadWorld(false);
-        var calculation = fixture.newCalculation(D, 1);
-        assertFalse(((CalculationMode) calculation).ae2byproductremover$reuseOtherOutputs());
-        PlanningMode.loadWorld(true);
-        assertEquals(2, runAttempt(calculation, 1).usedItems().get(A));
-        assertEquals(1, fixture.calculate(D, 1, true).usedItems().get(A));
+        for (boolean reuse : new boolean[] { false, true }) {
+            PlanningMode.loadWorld(reuse);
+            var calculation = fixture.newCalculation(D, 1);
+            assertEquals(reuse, ((CalculationMode) calculation).ae2byproductremover$reuseOtherOutputs());
+            PlanningMode.loadWorld(!reuse);
+            assertEquals(reuse ? 1 : 2, runAttempt(calculation, 1).usedItems().get(A));
+            assertEquals(reuse ? 2 : 1, runAttempt(fixture.newCalculation(D, 1), 1).usedItems().get(A));
+        }
     }
 
     @Test

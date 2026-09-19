@@ -125,11 +125,13 @@ class ThunderboltPlanningTest {
     @Test
     void fastPlannerUsesModeCapturedByCalculation() throws Exception {
         var fixture = chain(Map.of(A, 10L));
-        PlanningMode.loadWorld(false);
-        var calculation = fixture.newCalculation(D, 1);
-        PlanningMode.loadWorld(true);
-        assertEquals(2, runFastAttempt(calculation, 1).usedItems().get(A));
-        assertEquals(1, fixture.calculate(D, 1, true).usedItems().get(A));
+        for (boolean reuse : new boolean[] { false, true }) {
+            PlanningMode.loadWorld(reuse);
+            var calculation = fixture.newCalculation(D, 1);
+            PlanningMode.loadWorld(!reuse);
+            assertEquals(reuse ? 1 : 2, runFastAttempt(calculation, 1).usedItems().get(A));
+            assertEquals(reuse ? 2 : 1, runFastAttempt(fixture.newCalculation(D, 1), 1).usedItems().get(A));
+        }
     }
 
     private static Fixture chain(Map<AEKey, Long> stock) {

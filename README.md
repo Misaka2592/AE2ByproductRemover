@@ -8,7 +8,7 @@
 
 | 安装文件 | Minecraft / 加载器 | AE2 |
 | --- | --- | --- |
-| `ae2byproductremover-neoforge-0.1.1-fix2.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
+| `ae2byproductremover-neoforge-0.1.1-fix3.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
 
 将 JAR 放入客户端与服务端的 `mods` 目录，同时安装 AE2 19.2.17。该版 AE2 已内置 GuideME。已有有效处理样板保留原存储格式，无须重新编码。
 
@@ -24,7 +24,11 @@
 useByproducts = false
 ```
 
-设为 `true` 后允许复用其他预计产物，上述例子只需 1A。修改配置后重新加载世界或重启服务器；新计划采用新设置，已提交任务保留原计划与进度。这两个选项对应 Lite／产物复用的计算语义。
+设为 `true` 后允许复用其他预计产物，上述例子只需 1A。保存配置文件后自动重载，无须重新进入世界或重启服务器；重载完成后创建的合成计算采用新设置。已开始的计算、已经打开的预览和已提交任务保持原计划，预览不会自动重算，之后点击开始也按原计划执行；需要新模式时重新下单。这两个选项对应 Lite／产物复用的计算语义。
+
+多人游戏修改服务端世界的上述文件。自动重载使用 NeoForge 的文件监听；实例或服务器的 `config/fml.toml` 中 `disableConfigWatcher` 应保持默认值 `false`。修改 `defaultconfigs` 中的模板不会热更新已加载的世界配置。
+
+配置热重载仅支持 NeoForge 1.21.1；Forge 1.20.1 仍需重新加载世界或重启服务器后应用新设置。
 
 两种模式都将无用途的其他产物排除在任务的“已计划”“合成中”状态及完成条件之外。参与后续加工的产物正常显示；数量按样板的整批产量记账。请求产物到齐且全部计划加工已派发后完成任务。
 
@@ -59,9 +63,9 @@ AdvancedAE 高级处理样板在处理模式内重编码时保留高级类型：
 .\gradlew.bat build
 ```
 
-产物位于 `build/libs/ae2byproductremover-neoforge-0.1.1-fix2.jar`。`src/main` 是发布源码，`src/test` 是基础测试，`src/compatTest` 是可选附属测试，`src/smoke` 是客户端加载测试。
+产物位于 `build/libs/ae2byproductremover-neoforge-0.1.1-fix3.jar`。`src/main` 是发布源码，`src/test` 是基础测试，`src/compatTest` 是可选附属测试，`src/smoke` 是客户端加载测试。
 
-正式版本号推进前，每批小修使用递增的 `-fixN` 构建文件后缀，从 `fix1` 开始；本批为 `fix2`，下一批为 `fix3`。在 `gradle.properties` 中更新 `build_suffix`，后缀只用于文件名，模组内的 `mod_version` 保持正式版本号。正式升级版本时清空 `build_suffix`，该版本后续的小修重新从 `fix1` 计数。
+正式版本号推进前，每批小修使用递增的 `-fixN` 构建文件后缀，从 `fix1` 开始；本批为 `fix3`，下一批为 `fix4`。在 `gradle.properties` 中更新 `build_suffix`，后缀只用于文件名，模组内的 `mod_version` 保持正式版本号。正式升级版本时清空 `build_suffix`，该版本后续的小修重新从 `fix1` 计数。
 
 构建时仅编译引用 AdvancedAE 与 Neo ECO，不将它们打包进本模组。测试上述附属兼容时，指定含对应版本及其前置模组的 `mods` 目录：
 

@@ -16,7 +16,7 @@ public final class PlanningMode {
         return useByproducts;
     }
 
-    /** Called only when the world's SERVER configuration is loaded, never on a live config reload. */
+    /** Applies the world's SERVER configuration to future calculations, preserving existing plans. */
     public static void loadWorld(boolean enabled) {
         useByproducts = enabled;
     }
