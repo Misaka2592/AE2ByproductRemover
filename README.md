@@ -6,7 +6,7 @@
 
 | 安装文件 | Minecraft / 加载器 | AE2 |
 | --- | --- | --- |
-| `ae2byproductremover-forge-0.1.2.jar` | 1.20.1 / Forge 47.4.16 | 15.4.10 |
+| `ae2byproductremover-forge-0.1.1.jar` | 1.20.1 / Forge 47.4.16 | 15.4.10 |
 
 将 JAR 放入客户端与服务端的 `mods` 目录，同时安装 AE2 15.4.10 及其前置 GuideME 20.1.7。已有有效处理样板保留原存储格式，无须重新编码。
 
@@ -40,7 +40,7 @@ useByproducts = false
 .\gradlew.bat build
 ```
 
-发布产物为 `build/libs/ae2byproductremover-forge-0.1.2.jar`。构建包含输出压紧的 4 项单元测试；真实 AE2 规划、产物注册、CPU 派发与存档恢复使用 3 项 GameTest：
+发布产物为 `build/libs/ae2byproductremover-forge-0.1.1.jar`。构建包含输出压紧的 4 项单元测试；真实 AE2 规划、产物注册、CPU 派发与存档恢复使用 3 项 GameTest：
 
 ```powershell
 .\gradlew.bat runGameTestServer
