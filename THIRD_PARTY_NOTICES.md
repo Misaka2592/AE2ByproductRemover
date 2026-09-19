@@ -10,10 +10,9 @@
 
 | 基线 | 固定源码 | 许可证 |
 | --- | --- | --- |
-| Forge 15.4.10 / Minecraft 1.20.1 | [`b4b08d9941e3faecb520d76be617629bb56661e1`](https://github.com/AppliedEnergistics/Applied-Energistics-2/tree/b4b08d9941e3faecb520d76be617629bb56661e1) | [LICENSE](https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/b4b08d9941e3faecb520d76be617629bb56661e1/LICENSE) |
 | NeoForge 19.2.17 / Minecraft 1.21.1 | [`79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a`](https://github.com/AppliedEnergistics/Applied-Energistics-2/tree/79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a) | [LICENSE](https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a/LICENSE) |
 
-本项目 `PatternEncodingTermMenuMixin` 的输入采集、至少一个输入的校验流程改写自 AE2 的 `PatternEncodingTermMenu.encodeProcessingPattern`：[Forge 原方法](https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/b4b08d9941e3faecb520d76be617629bb56661e1/src/main/java/appeng/menu/me/items/PatternEncodingTermMenu.java)、[NeoForge 原方法](https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a/src/main/java/appeng/menu/me/items/PatternEncodingTermMenu.java)。
+本分支 `src/main/java/dev/ae2byproductremover/mixin/encoding/PatternEncodingTermMenuMixin.java` 的输入采集、至少一个输入的校验流程改写自 AE2 的 [`PatternEncodingTermMenu.encodeProcessingPattern`](https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/79ee2c704ad62941a426c26b1cb1f76ef5b2ee5a/src/main/java/appeng/menu/me/items/PatternEncodingTermMenu.java)。
 
 原版权声明为 `Copyright (c) 2013 - 2014, AlgorithmX2, All rights reserved.`；对应文件明确授予 LGPL 第 3 版或任意后续版本。该版权声明已保留在本项目改写文件中。2026-09-20 的修改加入了输出空槽压紧，并以存在有效输出作为编码条件。
 

@@ -4,6 +4,5 @@
 **/run-server/
 .idea/
 *.iml
-.scratch/tools/
-.scratch/upstream/
+.scratch/
 *.log

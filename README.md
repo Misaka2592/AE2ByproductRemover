@@ -2,14 +2,15 @@
 
 使 AE2 处理样板的每一种产物都可下单，并控制合成计划是否复用其他预计产物。
 
+当前 `master` 分支为 **Minecraft 1.21.1 / NeoForge** 独立工程。Forge 1.20.1 的源码、构建与说明位于 [`1.20.1` 分支](https://github.com/Misaka2592/AE2ByproductRemover/tree/1.20.1)。两个分支各自包含完整源码，无共享子项目。
+
 项目代码采用 **LGPL-3.0-or-later**，见 [LICENSE](LICENSE)。编码逻辑改写自 Applied Energistics 2，计算语义参考 GTNH 的 AE2 Lite／V2 实现；具体版本、上游作者、源码位置和兼容接口来源见 [代码来源与第三方声明](THIRD_PARTY_NOTICES.md)。Gradle Wrapper 保留其 Apache-2.0 许可证。
 
 | 安装文件 | Minecraft / 加载器 | AE2 |
 | --- | --- | --- |
-| `ae2byproductremover-forge-0.1.2.jar` | 1.20.1 / Forge 47.4.16 | 15.4.10 |
 | `ae2byproductremover-neoforge-0.1.2.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
 
-将对应平台的 JAR 放入客户端与服务端的 `mods` 目录，同时安装对应 AE2。Forge 版还需要 AE2 的前置 GuideME 20.1.7；NeoForge 的 AE2 已内置 GuideME。已有有效处理样板保留原存储格式，无须重新编码。
+将 JAR 放入客户端与服务端的 `mods` 目录，同时安装 AE2 19.2.17。该版 AE2 已内置 GuideME。已有有效处理样板保留原存储格式，无须重新编码。
 
 ## 计算规则
 
@@ -46,32 +47,28 @@ AdvancedAE 与 Neo ECO 共用 AE2／Thunderbolt 的规划入口，兼容同时�
 
 ## 构建
 
-需要 JDK 17 和 JDK 21；Gradle 用 JDK 21 启动。可分别设置 `JAVA17_HOME`、`JAVA21_HOME` 供工具链定位。
+需要 JDK 21。将 `JAVA_HOME` 指向 JDK 21；也可设置 `JAVA21_HOME` 供工具链定位。
 
 ```powershell
 .\gradlew.bat build
 ```
 
-产物分别位于 `forge/build/libs/` 与 `neoforge/build/libs/`。
+产物位于 `build/libs/ae2byproductremover-neoforge-0.1.2.jar`。`src/main` 是发布源码，`src/test` 是基础测试，`src/compatTest` 是可选附属测试，`src/smoke` 是客户端加载测试。
 
 构建时仅编译引用 AdvancedAE 与 Neo ECO，不将它们打包进本模组。测试上述附属兼容时，指定含对应版本及其前置模组的 `mods` 目录：
 
 ```powershell
-.\gradlew.bat :neoforge:test -PcompatTests=true "-PcompatModsDir=D:\path\to\instance\mods"
+.\gradlew.bat test -PcompatTests=true "-PcompatModsDir=D:\path\to\instance\mods"
 ```
 
 该测试直接加载整合包中的模组 JAR，包含 Thunderbolt 快速规划、Data Energistics 重编码，以及两个附属 CPU 的实际执行与存档入口。
 
-`build` 包含两个平台的输出压紧测试，以及 NeoForge 加载真实 AE2 和 Mixin 后的编码、规划、执行与存档测试。Forge 的运行测试使用 GameTest：
+`build` 包含输出压紧测试，以及加载真实 AE2 和 Mixin 后的编码、规划、执行与存档测试。兼容测试目录还需包含 LDLib2 2.2.37 与 GeckoLib 4.9.2。
+
+验证客户端的界面与编码 Mixin 加载后自动退出：
 
 ```powershell
-.\gradlew.bat :forge:runGameTestServer
+.\gradlew.bat runClientSmoke
 ```
 
-验证两个客户端的界面与编码 Mixin 加载后自动退出：
-
-```powershell
-.\gradlew.bat :forge:runClientSmoke :neoforge:runClientSmoke
-```
-
-设计及验收场景见 [.scratch/processing-outputs/spec.md](.scratch/processing-outputs/spec.md)。
+设计及验收场景见 [功能规格](docs/specification.md)。
