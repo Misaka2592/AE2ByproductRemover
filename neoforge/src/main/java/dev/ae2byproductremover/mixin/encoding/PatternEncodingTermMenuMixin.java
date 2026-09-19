@@ -1,3 +1,13 @@
+/*
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ * Copyright (c) 2013 - 2014, AlgorithmX2, All rights reserved.
+ * Modifications Copyright (c) 2026 Misaka2592 and contributors.
+ *
+ * Adapted from Applied Energistics 2 PatternEncodingTermMenu.encodeProcessingPattern.
+ * Modified 2026-09-20: compact output slots before validation and encoding.
+ * Original and modified code are licensed under LGPL version 3 or any later version.
+ * See LICENSE and THIRD_PARTY_NOTICES.md for license terms and pinned upstream sources.
+ */
 package dev.ae2byproductremover.mixin.encoding;
 
 import java.util.ArrayList;

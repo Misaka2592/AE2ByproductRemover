@@ -1,11 +1,14 @@
 modLoader="javafml"
 loaderVersion="[4,)"
-license="All Rights Reserved"
+license="LGPL-3.0-or-later"
+issueTrackerURL="https://github.com/Misaka2592/AE2ByproductRemover/issues"
 
 [[mods]]
 modId="ae2byproductremover"
 version="${mod_version}"
 displayName="AE2 Byproduct Remover"
+displayURL="https://github.com/Misaka2592/AE2ByproductRemover"
+authors="Misaka2592"
 description='''Makes every processing-pattern output requestable and controls predicted output reuse.'''
 
 [[mixins]]

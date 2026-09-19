@@ -2,10 +2,12 @@
 
 使 AE2 处理样板的每一种产物都可下单，并控制合成计划是否复用其他预计产物。
 
+项目代码采用 **LGPL-3.0-or-later**，见 [LICENSE](LICENSE)。编码逻辑改写自 Applied Energistics 2，计算语义参考 GTNH 的 AE2 Lite／V2 实现；具体版本、上游作者、源码位置和兼容接口来源见 [代码来源与第三方声明](THIRD_PARTY_NOTICES.md)。Gradle Wrapper 保留其 Apache-2.0 许可证。
+
 | 安装文件 | Minecraft / 加载器 | AE2 |
 | --- | --- | --- |
-| `ae2byproductremover-forge-0.1.1.jar` | 1.20.1 / Forge 47.4.16 | 15.4.10 |
-| `ae2byproductremover-neoforge-0.1.1.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
+| `ae2byproductremover-forge-0.1.2.jar` | 1.20.1 / Forge 47.4.16 | 15.4.10 |
+| `ae2byproductremover-neoforge-0.1.2.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
 
 将对应平台的 JAR 放入客户端与服务端的 `mods` 目录，同时安装对应 AE2。Forge 版还需要 AE2 的前置 GuideME 20.1.7；NeoForge 的 AE2 已内置 GuideME。已有有效处理样板保留原存储格式，无须重新编码。
 

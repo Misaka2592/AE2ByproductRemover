@@ -34,6 +34,9 @@ subprojects {
     }
     tasks.withType(Jar).configureEach {
         archiveBaseName = "ae2byproductremover-${project.name}"
+        from(rootProject.file('LICENSE'))
+        from(rootProject.file('THIRD_PARTY_NOTICES.md'))
+        from(rootProject.file('licenses')) { into 'licenses' }
     }
     tasks.withType(Test).configureEach { useJUnitPlatform() }
     dependencies {
