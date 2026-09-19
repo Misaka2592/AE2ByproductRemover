@@ -8,6 +8,7 @@
     "advancedae.AdvCraftingCPULogicMixin",
     "advancedae.ExecutingCraftingJobMixin",
     "advancedae.TaskProgressAccessor",
+    "advancedae.PatternEncodingTermMenuMixin",
     "neoecoae.ECOCraftingCPULogicMixin",
     "neoecoae.ExecutingCraftingJobMixin",
     "neoecoae.TaskProgressAccessor",

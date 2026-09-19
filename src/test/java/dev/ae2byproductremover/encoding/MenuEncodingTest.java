@@ -17,7 +17,9 @@ import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.GenericStack;
 import appeng.crafting.pattern.AEProcessingPattern;
 import appeng.menu.me.items.PatternEncodingTermMenu;
+import appeng.menu.slot.RestrictedInputSlot;
 import appeng.util.ConfigInventory;
+import appeng.util.inv.AppEngInternalInventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
@@ -90,6 +92,10 @@ class MenuEncodingTest {
             menu = (PatternEncodingTermMenu) constructor.newInstance();
             setInventory("encodedInputsInv", inputs);
             setInventory("encodedOutputsInv", outputs);
+            var encodedSlot = PatternEncodingTermMenu.class.getDeclaredField("encodedPatternSlot");
+            encodedSlot.setAccessible(true);
+            encodedSlot.set(menu, new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.ENCODED_PATTERN,
+                    new AppEngInternalInventory(1), 0));
             inputs.setStack(1, new GenericStack(AEItemKey.of(Items.COBBLESTONE), 1));
         }
 

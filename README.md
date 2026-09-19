@@ -8,7 +8,7 @@
 
 | 安装文件 | Minecraft / 加载器 | AE2 |
 | --- | --- | --- |
-| `ae2byproductremover-neoforge-0.1.1.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
+| `ae2byproductremover-neoforge-0.1.1-fix2.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
 
 将 JAR 放入客户端与服务端的 `mods` 目录，同时安装 AE2 19.2.17。该版 AE2 已内置 GuideME。已有有效处理样板保留原存储格式，无须重新编码。
 
@@ -28,6 +28,10 @@ useByproducts = false
 
 两种模式都将无用途的其他产物排除在任务的“已计划”“合成中”状态及完成条件之外。参与后续加工的产物正常显示；数量按样板的整批产量记账。请求产物到齐且全部计划加工已派发后完成任务。
 
+本项目使保留的各项产物均具备主产物的下单能力，不负责消除副产物带来的所有调度影响。涉及容器返还、副产物回流及循环样板的加工链，需要由玩家合理设计样板与物流，不纳入本项目的修复范围。
+
+原生 AE2 规划的递归检查与后续计算使用相同的产物范围，输出轮换不会使同一路径受到不同的检查。独立计算只检查当前目标输出；复用模式仍检查完整输出，保留 AE2 的保守防环限制。GTNH V2 防环策略兼容已列入[后续计划](docs/specification.md#后续计划)，尚未实现。
+
 ## 编码界面
 
 处理样板界面移除主副产物标识，原按钮循环轮换产物顺序。编码允许首个输出槽为空，并稳定压紧输出空槽，例如 `[空,B,空,C,空,D] → [B,C,D]`，保留顺序和数量。全空输出仍不能编码。
@@ -38,12 +42,14 @@ useByproducts = false
 
 | 模组 | 验证版本 | 接入行为 |
 | --- | --- | --- |
-| AdvancedAE | 1.6.12 | 独立 CPU 的样板派发、完成条件和任务存档 |
+| AdvancedAE | 1.6.12 | 独立 CPU 的样板派发、完成条件和任务存档；高级处理样板重编码时保留类型和输入方向 |
 | Neo ECO AE Extension | 21.1.1 | 独立 CPU 的样板派发、完成条件和任务存档 |
 | Thunderbolt Core | 1.0.6，NAST HARD 0.9.6 所带版本 | 快速规划中的 Lite／复用计算，以及预览和执行计划的产物过滤 |
 | Data Energistics | 3.1.3 | 重编码时压紧输出，允许首槽为空，保留自定义资源及数量处理 |
 
 AdvancedAE 与 Neo ECO 共用 AE2／Thunderbolt 的规划入口，兼容同时覆盖它们后续执行和存档恢复的独立实现。
+
+AdvancedAE 高级处理样板在处理模式内重编码时保留高级类型：保留的输入资源继承方向，新增输入未指定方向；即使全部原输入被替换，也仍生成高级样板。主动切换编码模式时按所选模式生成样板。高级样板的任意产物下单与 Lite／复用计算支持尚未实现。
 
 ## 构建
 
@@ -53,7 +59,9 @@ AdvancedAE 与 Neo ECO 共用 AE2／Thunderbolt 的规划入口，兼容同时�
 .\gradlew.bat build
 ```
 
-产物位于 `build/libs/ae2byproductremover-neoforge-0.1.1.jar`。`src/main` 是发布源码，`src/test` 是基础测试，`src/compatTest` 是可选附属测试，`src/smoke` 是客户端加载测试。
+产物位于 `build/libs/ae2byproductremover-neoforge-0.1.1-fix2.jar`。`src/main` 是发布源码，`src/test` 是基础测试，`src/compatTest` 是可选附属测试，`src/smoke` 是客户端加载测试。
+
+正式版本号推进前，每批小修使用递增的 `-fixN` 构建文件后缀，从 `fix1` 开始；本批为 `fix2`，下一批为 `fix3`。在 `gradle.properties` 中更新 `build_suffix`，后缀只用于文件名，模组内的 `mod_version` 保持正式版本号。正式升级版本时清空 `build_suffix`，该版本后续的小修重新从 `fix1` 计数。
 
 构建时仅编译引用 AdvancedAE 与 Neo ECO，不将它们打包进本模组。测试上述附属兼容时，指定含对应版本及其前置模组的 `mods` 目录：
 

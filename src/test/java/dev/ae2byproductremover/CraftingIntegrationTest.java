@@ -145,6 +145,52 @@ class CraftingIntegrationTest {
         assertEquals(1, fixture.calculate(D, 1, true).usedItems().get(A));
     }
 
+    @Test
+    void independentModePlansTheSameChainForEitherOutputOrder() throws Exception {
+        for (var outputs : List.of(List.of(stack(B), stack(C)), List.of(stack(C), stack(B)))) {
+            var fixture = prioritizedOutputChain(outputs);
+            var plan = fixture.calculate(C, 10, false);
+            assertEquals(1, plan.usedItems().get(A));
+            assertEquals(1, processingTimes(plan, A));
+            assertEquals(1, processingTimes(plan, B));
+            var intermediate = plan.patternTimes().keySet().stream()
+                    .filter(details -> details.getInputs()[0].getPossibleInputs()[0].what().equals(A))
+                    .findFirst().orElseThrow();
+            assertEquals(List.of(stack(B)), intermediate.getOutputs());
+        }
+    }
+
+    @Test
+    void reuseModeRetainsTheSameConservativeRecursionCheckForEitherOutputOrder() throws Exception {
+        PlanningMode.loadWorld(true);
+        for (var outputs : List.of(List.of(stack(B), stack(C)), List.of(stack(C), stack(B)))) {
+            var fixture = prioritizedOutputChain(outputs);
+            assertNull(runAttempt(fixture.newCalculation(C, 10), 10),
+                    "AE2 rejects P beneath C when the reuse view includes C; 1A cannot satisfy the fallback");
+        }
+    }
+
+    @Test
+    void genuineInputCyclesRemainUncraftableInBothModes() throws Exception {
+        for (boolean reuse : new boolean[] { false, true }) {
+            PlanningMode.loadWorld(reuse);
+            for (var outputs : List.of(List.of(stack(B), stack(C)), List.of(stack(C), stack(B)))) {
+                var fixture = new Fixture(List.of(pattern(List.of(stack(A)), outputs),
+                        pattern(List.of(stack(B)), List.of(stack(A)))), Map.of());
+                assertNull(runAttempt(fixture.newCalculation(B, 1), 1),
+                        "A -> B + C and B -> A must not manufacture a starting input");
+            }
+        }
+    }
+
+    private static Fixture prioritizedOutputChain(List<GenericStack> outputs) {
+        var fixture = new Fixture(List.of(pattern(List.of(stack(A)), outputs)), Map.of(A, 1L));
+        var higherPriority = pattern(List.of(stack(B)), List.of(new GenericStack(C, 10)));
+        fixture.addProvider(List.of(higherPriority), 1);
+        assertSame(higherPriority, fixture.providers.getCraftingFor(C).iterator().next());
+        return fixture;
+    }
+
     private static long processingTimes(CraftingPlan plan, AEKey input) {
         return plan.patternTimes().entrySet().stream()
                 .filter(entry -> entry.getKey().getInputs()[0].getPossibleInputs()[0].what().equals(input))
@@ -173,9 +219,7 @@ class CraftingIntegrationTest {
         var attempt = CraftingCalculation.class.getDeclaredMethod("runCraftAttempt", boolean.class, long.class);
         attempt.setAccessible(true);
         try {
-            var plan = (CraftingPlan) attempt.invoke(calculation, false, amount);
-            assertNotNull(plan, "The available input stock must satisfy the plan");
-            return plan;
+            return (CraftingPlan) attempt.invoke(calculation, false, amount);
         } catch (InvocationTargetException error) {
             throw new AssertionError("AE2 planning failed", error.getCause());
         }
@@ -202,18 +246,23 @@ class CraftingIntegrationTest {
                 case "getStorageService" -> storage;
                 default -> null;
             });
+            node = addProvider(patterns, 0);
+        }
+
+        private IGridNode addProvider(List<IPatternDetails> patterns, int priority) {
             var provider = proxy(ICraftingProvider.class, (method, args) -> switch (method.getName()) {
                 case "getAvailablePatterns" -> patterns;
                 case "getEmitableItems" -> Set.of();
-                case "getPatternPriority" -> 0;
+                case "getPatternPriority" -> priority;
                 default -> null;
             });
-            node = proxy(IGridNode.class, (method, args) -> switch (method.getName()) {
+            var providerNode = proxy(IGridNode.class, (method, args) -> switch (method.getName()) {
                 case "getService" -> args[0] == ICraftingProvider.class ? provider : null;
                 case "getGrid" -> grid;
                 default -> null;
             });
-            providers.addProvider(node);
+            providers.addProvider(providerNode);
+            return providerNode;
         }
 
         private CraftingCalculation newCalculation(AEKey output, long amount) {
@@ -227,7 +276,9 @@ class CraftingIntegrationTest {
 
         private CraftingPlan calculate(AEKey output, long amount, boolean reuse) throws Exception {
             PlanningMode.loadWorld(reuse);
-            return runAttempt(newCalculation(output, amount), amount);
+            var plan = runAttempt(newCalculation(output, amount), amount);
+            assertNotNull(plan, "The available input stock must satisfy the plan");
+            return plan;
         }
     }
 
