@@ -1,0 +1,4 @@
+{
+  "gui.ae2byproductremover.cycle_outputs": "轮换产物顺序",
+  "gui.ae2byproductremover.cycle_outputs_hint": "循环调整非空产物的排列。\n每一种产物均可下单。"
+}

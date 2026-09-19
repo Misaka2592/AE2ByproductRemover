@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.ae2byproductremover.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ProviderStateMixin",
+    "NetworkCraftingProvidersMixin",
+    "CraftingCalculationMixin",
+    "CraftingTreeNodeMixin",
+    "CraftingSimulationStateMixin",
+    "execution.CraftingCpuLogicMixin",
+    "execution.ExecutingCraftingJobAccessor",
+    "execution.TaskProgressAccessor",
+    "persistence.ExecutingCraftingJobMixin",
+    "encoding.PatternEncodingTermMenuMixin"
+  ],
+  "client": [
+    "client.ProcessingEncodingPanelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "gui.ae2byproductremover.cycle_outputs": "Cycle Output Order",
+  "gui.ae2byproductremover.cycle_outputs_hint": "Rotate the non-empty outputs.\nEvery output can be requested."
+}

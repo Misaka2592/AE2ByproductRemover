@@ -1,0 +1,67 @@
+plugins { id 'net.minecraftforge.gradle' }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+configurations {
+    gametestImplementation.extendsFrom implementation
+    gametestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    runs {
+        configureEach {
+            args '--mixin', 'ae2byproductremover.mixins.json'
+            // Dependency jars carry production SRG refmaps; development runs use official names.
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', project.layout.buildDirectory.file('createSrgToMcp/output.srg').get().asFile.absolutePath
+        }
+        client {
+            workingDirectory project.file('run')
+            mods { ae2byproductremover { source sourceSets.main } }
+        }
+        server {
+            workingDirectory project.file('run-server')
+            args '--nogui'
+            mods { ae2byproductremover { source sourceSets.main } }
+        }
+        gameTestServer {
+            workingDirectory project.layout.buildDirectory.dir('gametest').get().asFile
+            property 'forge.enabledGameTestNamespaces', 'ae2byproductremover'
+            mods {
+                ae2byproductremover {
+                    source sourceSets.main
+                    source sourceSets.gametest
+                }
+            }
+        }
+        clientSmoke {
+            parent runs.client
+            workingDirectory project.layout.buildDirectory.dir('client-smoke').get().asFile
+            property 'ae2byproductremover.clientSmoke', 'true'
+            mods {
+                ae2byproductremover {
+                    source sourceSets.main
+                    source sourceSets.gametest
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.16'
+    implementation fg.deobf('appeng:appliedenergistics2-forge:15.4.10')
+    runtimeOnly fg.deobf('org.appliedenergistics:guideme:20.1.7')
+}
+
+tasks.named('jar') {
+    manifest.attributes('MixinConfigs': 'ae2byproductremover.mixins.json')
+    finalizedBy 'reobfJar'
+}
