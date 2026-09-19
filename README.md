@@ -8,7 +8,7 @@
 
 | 安装文件 | Minecraft / 加载器 | AE2 |
 | --- | --- | --- |
-| `ae2byproductremover-neoforge-0.1.2.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
+| `ae2byproductremover-neoforge-0.1.1.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
 
 将 JAR 放入客户端与服务端的 `mods` 目录，同时安装 AE2 19.2.17。该版 AE2 已内置 GuideME。已有有效处理样板保留原存储格式，无须重新编码。
 
@@ -53,7 +53,7 @@ AdvancedAE 与 Neo ECO 共用 AE2／Thunderbolt 的规划入口，兼容同时�
 .\gradlew.bat build
 ```
 
-产物位于 `build/libs/ae2byproductremover-neoforge-0.1.2.jar`。`src/main` 是发布源码，`src/test` 是基础测试，`src/compatTest` 是可选附属测试，`src/smoke` 是客户端加载测试。
+产物位于 `build/libs/ae2byproductremover-neoforge-0.1.1.jar`。`src/main` 是发布源码，`src/test` 是基础测试，`src/compatTest` 是可选附属测试，`src/smoke` 是客户端加载测试。
 
 构建时仅编译引用 AdvancedAE 与 Neo ECO，不将它们打包进本模组。测试上述附属兼容时，指定含对应版本及其前置模组的 `mods` 目录：
 
