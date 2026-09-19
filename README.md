@@ -1,15 +1,16 @@
-# AE2 Byproduct Remover
+# AE2 Byproduct Remover — Forge 1.20.1
 
 使 AE2 处理样板的每一种产物都可下单，并控制合成计划是否复用其他预计产物。
 
-项目代码采用 **LGPL-3.0-or-later**，见 [LICENSE](LICENSE)。编码逻辑改写自 Applied Energistics 2，计算语义参考 GTNH 的 AE2 Lite／V2 实现；具体版本、上游作者、源码位置和兼容接口来源见 [代码来源与第三方声明](THIRD_PARTY_NOTICES.md)。Gradle Wrapper 保留其 Apache-2.0 许可证。
+项目代码采用 **LGPL-3.0-or-later**，见 [LICENSE](LICENSE)。编码逻辑改写自 Applied Energistics 2，计算语义参考 GTNH 的 AE2 Lite／V2 实现；具体版本、上游作者和源码位置见 [代码来源与第三方声明](THIRD_PARTY_NOTICES.md)。Gradle Wrapper 保留其 Apache-2.0 许可证。
 
 | 安装文件 | Minecraft / 加载器 | AE2 |
 | --- | --- | --- |
 | `ae2byproductremover-forge-0.1.2.jar` | 1.20.1 / Forge 47.4.16 | 15.4.10 |
-| `ae2byproductremover-neoforge-0.1.2.jar` | 1.21.1 / NeoForge 21.1.241–21.1.x | 19.2.17 |
 
-将对应平台的 JAR 放入客户端与服务端的 `mods` 目录，同时安装对应 AE2。Forge 版还需要 AE2 的前置 GuideME 20.1.7；NeoForge 的 AE2 已内置 GuideME。已有有效处理样板保留原存储格式，无须重新编码。
+将 JAR 放入客户端与服务端的 `mods` 目录，同时安装 AE2 15.4.10 及其前置 GuideME 20.1.7。已有有效处理样板保留原存储格式，无须重新编码。
+
+本分支 `1.20.1` 独立维护 Forge 版；NeoForge 1.21.1 版及其附属模组兼容见 [`master` 分支](https://github.com/Misaka2592/AE2ByproductRemover/tree/master)。两个分支均在根目录独立构建。
 
 ## 计算规则
 
@@ -31,47 +32,24 @@ useByproducts = false
 
 处理样板界面移除主副产物标识，原按钮循环轮换产物顺序。编码允许首个输出槽为空，并稳定压紧输出空槽，例如 `[空,B,空,C,空,D] → [B,C,D]`，保留顺序和数量。全空输出仍不能编码。
 
-## NeoForge 附属模组兼容
+## 构建与测试
 
-以下兼容会在对应模组存在时自动启用：
-
-| 模组 | 验证版本 | 接入行为 |
-| --- | --- | --- |
-| AdvancedAE | 1.6.12 | 独立 CPU 的样板派发、完成条件和任务存档 |
-| Neo ECO AE Extension | 21.1.1 | 独立 CPU 的样板派发、完成条件和任务存档 |
-| Thunderbolt Core | 1.0.6，NAST HARD 0.9.6 所带版本 | 快速规划中的 Lite／复用计算，以及预览和执行计划的产物过滤 |
-| Data Energistics | 3.1.3 | 重编码时压紧输出，允许首槽为空，保留自定义资源及数量处理 |
-
-AdvancedAE 与 Neo ECO 共用 AE2／Thunderbolt 的规划入口，兼容同时覆盖它们后续执行和存档恢复的独立实现。
-
-## 构建
-
-需要 JDK 17 和 JDK 21；Gradle 用 JDK 21 启动。可分别设置 `JAVA17_HOME`、`JAVA21_HOME` 供工具链定位。
+需要 JDK 17 编译和运行 Minecraft。Gradle 可使用 JDK 17 或 JDK 21 启动；使用 JDK 21 时，可设置 `JAVA17_HOME` 指向 JDK 17，供工具链定位。
 
 ```powershell
 .\gradlew.bat build
 ```
 
-产物分别位于 `forge/build/libs/` 与 `neoforge/build/libs/`。
-
-构建时仅编译引用 AdvancedAE 与 Neo ECO，不将它们打包进本模组。测试上述附属兼容时，指定含对应版本及其前置模组的 `mods` 目录：
+发布产物为 `build/libs/ae2byproductremover-forge-0.1.2.jar`。构建包含输出压紧的 4 项单元测试；真实 AE2 规划、产物注册、CPU 派发与存档恢复使用 3 项 GameTest：
 
 ```powershell
-.\gradlew.bat :neoforge:test -PcompatTests=true "-PcompatModsDir=D:\path\to\instance\mods"
+.\gradlew.bat runGameTestServer
 ```
 
-该测试直接加载整合包中的模组 JAR，包含 Thunderbolt 快速规划、Data Energistics 重编码，以及两个附属 CPU 的实际执行与存档入口。
-
-`build` 包含两个平台的输出压紧测试，以及 NeoForge 加载真实 AE2 和 Mixin 后的编码、规划、执行与存档测试。Forge 的运行测试使用 GameTest：
+验证客户端编码界面与菜单 Mixin 加载后自动退出：
 
 ```powershell
-.\gradlew.bat :forge:runGameTestServer
+.\gradlew.bat runClientSmoke
 ```
 
-验证两个客户端的界面与编码 Mixin 加载后自动退出：
-
-```powershell
-.\gradlew.bat :forge:runClientSmoke :neoforge:runClientSmoke
-```
-
-设计及验收场景见 [.scratch/processing-outputs/spec.md](.scratch/processing-outputs/spec.md)。
+代码位于 `src/main/`，单元测试位于 `src/test/`，GameTest 与客户端冒烟入口位于 `src/gametest/`。设计及验收场景见 [规格](docs/specification.md)，版本依据见 [GregTech Leisure 发布清单](docs/references/pack-leisure.md)。
