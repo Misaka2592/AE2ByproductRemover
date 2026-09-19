@@ -6,7 +6,7 @@
 
 | 安装文件 | Minecraft / 加载器 | AE2 |
 | --- | --- | --- |
-| `ae2byproductremover-forge-0.1.1.jar` | 1.20.1 / Forge 47.4.16 | 15.4.10 |
+| `ae2byproductremover-forge-0.1.1-fix2.jar` | 1.20.1 / Forge 47.4.16 | 15.4.10 |
 
 将 JAR 放入客户端与服务端的 `mods` 目录，同时安装 AE2 15.4.10 及其前置 GuideME 20.1.7。已有有效处理样板保留原存储格式，无须重新编码。
 
@@ -28,6 +28,10 @@ useByproducts = false
 
 两种模式都将无用途的其他产物排除在任务的“已计划”“合成中”状态及完成条件之外。参与后续加工的产物正常显示；数量按样板的整批产量记账。请求产物到齐且全部计划加工已派发后完成任务。
 
+本项目使保留的各项产物均具备主产物的下单能力，不负责消除副产物带来的所有调度影响。涉及容器返还、副产物回流及循环样板的加工链，需要由玩家合理设计样板与物流，不纳入本项目的修复范围。
+
+原生 AE2 规划的递归检查与后续计算使用相同的产物范围，输出轮换不会使同一路径受到不同的检查。独立计算只检查当前目标输出；复用模式仍检查完整输出，保留 AE2 的保守防环限制。GTNH V2 防环策略兼容已列入[后续计划](docs/specification.md#后续计划)，尚未实现。
+
 ## 编码界面
 
 处理样板界面移除主副产物标识，原按钮循环轮换产物顺序。编码允许首个输出槽为空，并稳定压紧输出空槽，例如 `[空,B,空,C,空,D] → [B,C,D]`，保留顺序和数量。全空输出仍不能编码。
@@ -40,7 +44,9 @@ useByproducts = false
 .\gradlew.bat build
 ```
 
-发布产物为 `build/libs/ae2byproductremover-forge-0.1.1.jar`。构建包含输出压紧的 4 项单元测试；真实 AE2 规划、产物注册、CPU 派发与存档恢复使用 3 项 GameTest：
+发布产物为 `build/libs/ae2byproductremover-forge-0.1.1-fix2.jar`。同一正式版本的小修构建按批次使用 `fixN` 后缀，从 `fix1` 依次递增，本批为 `fix2`。后缀仅用于构建文件名，由 `gradle.properties` 中的 `build_suffix` 控制，`mod_version` 保持正式版本基线；推进正式版本时清空 `build_suffix`，下一轮小修从 `fix1` 开始。
+
+构建包含输出压紧的 4 项单元测试；真实 AE2 规划、输出排列与递归检查、产物注册、CPU 派发及存档恢复使用 6 项 GameTest：
 
 ```powershell
 .\gradlew.bat runGameTestServer

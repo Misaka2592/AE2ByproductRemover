@@ -22,6 +22,12 @@ public abstract class CraftingTreeNodeMixin {
     @Shadow @Final private CraftingCalculation job;
 
     @ModifyArg(method = "buildChildPatterns", at = @At(value = "INVOKE",
+            target = "Lappeng/crafting/CraftingTreeProcess;notRecursive(Lappeng/api/crafting/IPatternDetails;)Z"), index = 0)
+    private IPatternDetails ae2byproductremover$selectOutputForRecursionCheck(IPatternDetails pattern) {
+        return ae2byproductremover$selectOutput(pattern);
+    }
+
+    @ModifyArg(method = "buildChildPatterns", at = @At(value = "INVOKE",
             target = "Lappeng/crafting/CraftingTreeProcess;<init>(Lappeng/api/networking/crafting/ICraftingService;Lappeng/crafting/CraftingCalculation;Lappeng/api/crafting/IPatternDetails;Lappeng/crafting/CraftingTreeNode;)V"), index = 2)
     private IPatternDetails ae2byproductremover$selectOutput(IPatternDetails pattern) {
         if (!OutputPattern.isProcessing(pattern)) {

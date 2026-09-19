@@ -55,6 +55,14 @@ Lite 的证据链：[`CraftingJobFast` 第 149–185 行](https://github.com/GTN
 
 固定版本 AE2FluidCraft 的 [`FluidPatternDetails` 第 131–170 行](https://github.com/GTNewHorizons/AE2FluidCraft-Rework/blob/31746024ee5482959f882fdadfe050d56427bd28/src/main/java/com/glodblock/github/util/FluidPatternDetails.java#L131-L170) 也返回完整输出；`setOutputs()` 过滤空输出但保留全部非空类型。[第 248–259 行](https://github.com/GTNewHorizons/AE2FluidCraft-Rework/blob/31746024ee5482959f882fdadfe050d56427bd28/src/main/java/com/glodblock/github/util/FluidPatternDetails.java#L248-L259) 读取的附加设置为 `beSubstitute` 与 `combine`，未在这条普通样板解码路径发现去副产物的开关或按请求过滤。
 
+## 目标输出与防环策略
+
+Lite 的 [`CraftingJobFast` 第 78–92 行](https://github.com/GTNewHorizons/Applied-Energistics-2-Unofficial/blob/f9f49159899bdcdbf88a341e22b159cd58a61585/src/main/java/appeng/crafting/fast/CraftingJobFast.java#L78-L92) 先为当前需求匹配产物及产量；[`SccResolver` 第 72–103 行](https://github.com/GTNewHorizons/Applied-Energistics-2-Unofficial/blob/f9f49159899bdcdbf88a341e22b159cd58a61585/src/main/java/appeng/crafting/fast/SccResolver.java#L72-L103) 沿样板输入建立依赖边。其他产物不会直接成为该依赖边。这里提供“先确定目标再检查依赖”的设计依据，不表示本项目移植了 Lite 的图算法，也不保证两套规划器的配方选择相同。
+
+V2 的 [`CraftingContext` 第 351–358 行](https://github.com/GTNewHorizons/Applied-Energistics-2-Unofficial/blob/f9f49159899bdcdbf88a341e22b159cd58a61585/src/main/java/appeng/crafting/v2/CraftingContext.java#L351-L358) 继承祖先样板集合，[`CraftableItemResolver` 第 674–680 行](https://github.com/GTNewHorizons/Applied-Energistics-2-Unofficial/blob/f9f49159899bdcdbf88a341e22b159cd58a61585/src/main/java/appeng/crafting/v2/resolvers/CraftableItemResolver.java#L674-L680) 排除重复祖先样板，与现代 AE2 对候选完整输出进行祖先需求检查的规则不同。
+
+本项目当前仅在现代 AE2 的递归检查之前转换候选输出视图，使检查与计算一致：Lite 仅包含目标输出，复用模式仍包含完整输出并保留原生保守限制。V2 防环策略的适配已列入后续计划，尚未实现。
+
 ## 对本项目大纲的影响
 
 - 项目已采用默认 2A 的 Lite 计算语义，并提供配置切换到 1A 的预计产物复用语义；具体行为见 [规格](../specification.md)。

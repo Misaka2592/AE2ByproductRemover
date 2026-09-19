@@ -26,6 +26,7 @@ tasks.withType(ProcessResources).configureEach {
 }
 tasks.withType(Jar).configureEach {
     archiveBaseName = 'ae2byproductremover-forge'
+    archiveClassifier = providers.gradleProperty('build_suffix').orElse('')
     from(project.file('LICENSE'))
     from(project.file('THIRD_PARTY_NOTICES.md'))
     from(project.file('licenses')) { into 'licenses' }
